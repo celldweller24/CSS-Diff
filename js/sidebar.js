@@ -38,16 +38,37 @@
     body.querySelector('#wrapper').classList.add('showMessage');
     body.querySelector('#wrapper').classList.remove('showResult');
 
+    //alert(JSON.stringify(elements));
+
     if (elements.length === 0) {
       body.querySelector('#message p').innerHTML = "Nothing to compare. Please inspect two elements first.";
     } else if (elements.length === 1) {
       body.querySelector('#message p').innerHTML = "Nothing to compare. Please inspect one more element.";
     } else {
-      var elem1 = elements[0],
-        elem2 = elements[1],
-        diff = compareStyles(elem1.style, elem2.style);
+      var elem1 = elements[0], elem2 = elements[1];
+      var counter = (elem1.length > elem2.length) ? elem1.length : elem2.length;
 
-      diffRenderer.render({
+      for (var i = 0; counter > i; i++) {
+        var diff = compareStyles(elem1[i].style, elem2[i].style);
+        diffRenderer.render({
+          id: elem1[i].id,
+          tag: elem1[i].tag,
+          'class': elem1[i].class,
+          differentTab: (elem1.tabId !== chrome.devtools.inspectedWindow.tabId)
+        }, {
+          id: elem2[i].id,
+          tag: elem2[i].tag,
+          'class': elem2[i].class,
+          differentTab: (elem2.tabId !== chrome.devtools.inspectedWindow.tabId)
+        }, diff);
+
+        body.querySelector('#wrapper').classList.add('showResult');
+        body.querySelector('#wrapper').classList.remove('showMessage');
+
+      }
+
+
+      /*diffRenderer.render({
         id: elem1.id,
         tag: elem1.tag,
         'class': elem1.class,
@@ -60,7 +81,7 @@
       }, diff);
 
       body.querySelector('#wrapper').classList.add('showResult');
-      body.querySelector('#wrapper').classList.remove('showMessage');
+      body.querySelector('#wrapper').classList.remove('showMessage');*/
     }
   }
 
@@ -73,20 +94,34 @@
         elements = JSON.parse(json);
       }
 
+      /*for (var property in element) {
+        if (element.hasOwnProperty(property)) {
+          elements.unshift(element[property]);
+        }
+      }*/
+
+      alert(JSON.stringify(elements.length));
       elements.unshift(element);
-      if (elements.length > 2) {
+      alert(JSON.stringify(elements.length));
+      alert(JSON.stringify(elements));
+
+      /*if (elements.length > 2) {
         elements.length = 2; //keep only two elements
-      }
+      }*/
 
       localStorage.setItem('elements', JSON.stringify(elements));
 
       renderDiff(elements);
     } catch (e) {
       fallbackElements.unshift(element);
-      if (fallbackElements.length > 2) {
+      /*if (fallbackElements.length > 2) {
         fallbackElements.length = 2;
-      }
-
+      }*/
+      /*for (var property in element) {
+        if (element.hasOwnProperty(property)) {
+          fallbackElements.unshift(element[property]);
+        }
+      }*/
       renderDiff(fallbackElements);
     }
   }
@@ -97,6 +132,7 @@
 
   function loadLastSelected(callback) {
     chrome.devtools.inspectedWindow.eval("(" + CSSSnapshooter.toString() + ")($0)", function (result, isException) {
+      //alert(JSON.stringify(result));
       if (!isException && result !== null) {
         //include tabId so that we are able to differentiate between elements from current and other tab
         result.tabId = chrome.devtools.inspectedWindow.tabId;

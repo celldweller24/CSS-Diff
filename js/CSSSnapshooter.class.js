@@ -103,15 +103,49 @@ function CSSSnapshooter(node) {
     if (!node) {
       return null;
     }
+    //chrome.extension.getBackgroundPage().console.log('foo');
 
-    var styles = node.ownerDocument.defaultView.getComputedStyle(node);
+    // https://con-emea-jbaby-menap.jnjemeab19d3-dev.jjc-devops.com/ar   social-media-link
 
-    return {
+    //var styles = node.ownerDocument.defaultView.getComputedStyle(node);
+
+    var objects = node.childNodes;
+    //alert(JSON.stringify(objects));
+    //alert(JSON.stringify(node.childNodes));
+
+    //var objects = node.querySelectorAll("*");
+    //var objects = node.getElementsByTagName("*");
+    var nodesArray = [], nodes = {}, styles;
+    for (var key in objects) {
+      /*alert(objects[key].length + ' =1');
+      alert(JSON.stringify(objects[key]) + ' =2');
+      alert(key + ' =3');*/
+      if (objects[key] && typeof objects[key] !== 'undefined' && JSON.stringify(objects[key]) !== '{}' && !Number.isInteger(objects[key]) && Object.keys(objects[key]).length !== 0) {
+      //if (JSON.stringify(objects[key]) !== '{}' && typeof objects[key] !== 'undefined' && !Number.isInteger(objects[key])) {
+        //alert(JSON.stringify(objects[key]));
+        //styles = objects[key].ownerDocument.defaultView.getComputedStyle(objects[key]);
+        styles = window.getComputedStyle(objects[key]);
+
+        nodesArray.push({
+          'tag': objects[key].tagName,
+          'id': (objects[key].attributes.id) ? objects[key].attributes.id.value : undefined,
+          'class': (objects[key].attributes.class) ? objects[key].attributes.class.value : undefined,
+          'style': styleDeclarationToSimpleObject(styles)
+        });
+      }
+    }
+
+    nodesArray.forEach(function(item, i, nodesArray) {
+      nodes[i] = item;
+    });
+
+    /*return {
       'tag': node.tagName,
       'id': (node.attributes.id) ? node.attributes.id.value : undefined,
       'class': (node.attributes.class) ? node.attributes.class.value : undefined,
       'style': styleDeclarationToSimpleObject(styles)
-    };
+    };*/
+    return nodes;
   }
 
   return init();

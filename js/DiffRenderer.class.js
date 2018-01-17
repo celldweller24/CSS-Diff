@@ -125,6 +125,7 @@ function DiffRenderer(container) {
     buffer += '.</p>';
 
     container.querySelector('#comparing').innerHTML = buffer;
+
     buffer = '';
 
     var propertyTree = {};
