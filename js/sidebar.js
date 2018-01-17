@@ -100,10 +100,10 @@
         }
       }*/
 
-      alert(JSON.stringify(elements.length));
+      //alert(JSON.stringify(elements));
       elements.unshift(element);
-      alert(JSON.stringify(elements.length));
-      alert(JSON.stringify(elements));
+      //alert(JSON.stringify(elements.length));
+      //alert(JSON.stringify(elements));
 
       /*if (elements.length > 2) {
         elements.length = 2; //keep only two elements

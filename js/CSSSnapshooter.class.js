@@ -99,6 +99,21 @@ function CSSSnapshooter(node) {
     return output.join(' ');
   }
 
+  function getChildElementsRecursive(nodes) {
+    var childElements = [];
+    for (var key in nodes) {
+      if (nodes[key] && JSON.stringify(nodes[key]) !== '{}' && !Number.isInteger(nodes[key])) {
+        for (var node in nodes[key]) {
+          if (node.indexOf('sizcache') === 0) {
+            childElements.push(nodes[key]);
+            getChildElementsRecursive(nodes[key].childNodes);
+          }
+        }
+      }
+    }
+    return childNodes;
+  }
+
   function init() {
     if (!node) {
       return null;
@@ -109,39 +124,41 @@ function CSSSnapshooter(node) {
 
     //var styles = node.ownerDocument.defaultView.getComputedStyle(node);
 
-    var objects = node.childNodes;
-    //alert(JSON.stringify(objects));
+    //var objects = node.childNodes;
+    var objects = {"1":{"sizcache004254600351253868":10,"sizset":54},"12":{},"13":{"sizcache004254600351253868":10,"sizset":468},"15":{"sizcache004254600351253868":10,"sizset":546}};
     //alert(JSON.stringify(node.childNodes));
 
     //var objects = node.querySelectorAll("*");
     //var objects = node.getElementsByTagName("*");
-    //var objects = {"0":{"sizcache06806947525080147":10,"sizset":541},"1":{},"2":{},"3":{},"4":{}};
-    //var objects = {"0":{"sizcache06806947525080147":10,"sizset":528},"1":{},"2":{"sizcache06806947525080147":10,"sizset":530},"3":{},"4":{"sizcache06806947525080147":10,"sizset":532},"5":{},"6":{"sizcache06806947525080147":10,"sizset":534},"7":{},"8":{"sizcache06806947525080147":10,"sizset":536},"9":{},"10":{"sizcache06806947525080147":10,"sizset":538},"11":{}};
-    var nodesArray = [], nodes = {}, styles;
-    for (var key in objects) {
-      /*alert(objects[key].length + ' =1');
-      alert(JSON.stringify(objects[key]) + ' =2');
-      alert(key + ' =3');*/
-      if (objects[key] && typeof objects[key] !== 'undefined' && JSON.stringify(objects[key]) !== '{}' && !Number.isInteger(objects[key]) && Object.keys(objects[key]).length !== 0) {
-      //if (JSON.stringify(objects[key]) !== '{}' && typeof objects[key] !== 'undefined' && !Number.isInteger(objects[key])) {
-        //alert(JSON.stringify(objects[key]));
-        //styles = objects[key].ownerDocument.defaultView.getComputedStyle(objects[key]);
-        styles = window.getComputedStyle(objects[key]);
+    var nodeProperties = [], nodes = {}, styles, childNodes = [];
+    childNodes = getChildElementsRecursive(objects);
+    //alert(JSON.stringify(childNodes));
+    childNodes.forEach(function(item, i) {
+      /*styles = window.getComputedStyle(item[i]);
 
-        nodesArray.push({
-          'tag': objects[key].tagName,
-          'id': (objects[key].attributes.id) ? objects[key].attributes.id.value : undefined,
-          'class': (objects[key].attributes.class) ? objects[key].attributes.class.value : undefined,
-          'style': styleDeclarationToSimpleObject(styles)
-        });
-      }
-      alert(JSON.stringify(nodesArray));
-    }
-
-    nodesArray.forEach(function(item, i, nodesArray) {
-      nodes[i] = item;
+      nodeProperties.push({
+        'tag': objects[key].tagName,
+        'id': (objects[key].attributes.id) ? objects[key].attributes.id.value : undefined,
+        'class': (objects[key].attributes.class) ? objects[key].attributes.class.value : undefined,
+        'style': styleDeclarationToSimpleObject(styles)
+      });*/
     });
 
+    /*for (var key in objects) {
+      //styles = objects[key].ownerDocument.defaultView.getComputedStyle(objects[key]);
+      styles = window.getComputedStyle(objects[key]);
+
+      nodeProperties.push({
+        'tag': objects[key].tagName,
+        'id': (objects[key].attributes.id) ? objects[key].attributes.id.value : undefined,
+        'class': (objects[key].attributes.class) ? objects[key].attributes.class.value : undefined,
+        'style': styleDeclarationToSimpleObject(styles)
+      });
+    }
+
+    nodeProperties.forEach(function(item, i) {
+      nodes[i] = item;
+    });*/
     /*return {
       'tag': node.tagName,
       'id': (node.attributes.id) ? node.attributes.id.value : undefined,
@@ -154,6 +171,8 @@ function CSSSnapshooter(node) {
   return init();
 }
 
-/*
+
+//var tabObj = {"1":{"sizcache004254600351253868":10,"sizset":54},"12":{},"13":{"sizcache004254600351253868":10,"sizset":468},"15":{"sizcache004254600351253868":10,"sizset":546}};
 var tabObj = {"sizcache0661332189112815":10,"sizset":540};
-CSSSnapshooter(tabObj);*/
+
+CSSSnapshooter(tabObj);
