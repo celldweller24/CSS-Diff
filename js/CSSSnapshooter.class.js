@@ -115,6 +115,8 @@ function CSSSnapshooter(node) {
 
     //var objects = node.querySelectorAll("*");
     //var objects = node.getElementsByTagName("*");
+    //var objects = {"0":{"sizcache06806947525080147":10,"sizset":541},"1":{},"2":{},"3":{},"4":{}};
+    //var objects = {"0":{"sizcache06806947525080147":10,"sizset":528},"1":{},"2":{"sizcache06806947525080147":10,"sizset":530},"3":{},"4":{"sizcache06806947525080147":10,"sizset":532},"5":{},"6":{"sizcache06806947525080147":10,"sizset":534},"7":{},"8":{"sizcache06806947525080147":10,"sizset":536},"9":{},"10":{"sizcache06806947525080147":10,"sizset":538},"11":{}};
     var nodesArray = [], nodes = {}, styles;
     for (var key in objects) {
       /*alert(objects[key].length + ' =1');
@@ -133,6 +135,7 @@ function CSSSnapshooter(node) {
           'style': styleDeclarationToSimpleObject(styles)
         });
       }
+      alert(JSON.stringify(nodesArray));
     }
 
     nodesArray.forEach(function(item, i, nodesArray) {
@@ -150,3 +153,7 @@ function CSSSnapshooter(node) {
 
   return init();
 }
+
+/*
+var tabObj = {"sizcache0661332189112815":10,"sizset":540};
+CSSSnapshooter(tabObj);*/
