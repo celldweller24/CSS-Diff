@@ -132,19 +132,14 @@ function DiffRenderer(container) {
   this.render = function (element0, element1, diff) {
     var buffer = "";
     var webkitBuffer = "";
+    var bufferResult = "";
+    var containerWrapper = "";
 
     buffer += '<p class="description">Comparing <strong class="element0">' + this.nameElement(element0) + '</strong> ';
     buffer += (element0.differentTab) ? '(from different tab) ' : '';
     buffer += 'with <strong class="element1">' + this.nameElement(element1) + '</strong>';
     buffer += (element1.differentTab) ? '(from different tab)' : '';
     buffer += '.</p>';
-
-    //container.querySelector('#comparing').innerHTML = buffer;
-    /*var pTag = document.createElement('p');
-    pTag.className = ''*/
-    //container.querySelector('#comparing').append(buffer);
-
-    buffer = '';
 
     var propertyTree = {};
     var property, parentPropertyName;
@@ -190,7 +185,7 @@ function DiffRenderer(container) {
           if (isWebkitPrefixed(parentProperty.name)) {
             webkitBuffer += html;
           } else {
-            buffer += html;
+            bufferResult += html;
           }
         }
 
@@ -204,13 +199,28 @@ function DiffRenderer(container) {
           if (!parentProperty && isWebkitPrefixed(child.name)) {
             webkitBuffer += html;
           } else {
-            buffer += html;
+            bufferResult += html;
           }
         }
       }
     }
-    container.querySelectorAll('#result table')[0].innerHTML = buffer;
+
+    container.querySelector('#comparing').innerHTML = '';
+    container.querySelectorAll('#result table')[0].innerHTML = '';
+    container.querySelectorAll('#result table')[1].innerHTML = '';
+
+    container.querySelector('#comparing').innerHTML = buffer;
+    container.querySelectorAll('#result table')[0].innerHTML = bufferResult;
     container.querySelectorAll('#result table')[1].innerHTML = webkitBuffer;
+
+    containerWrapper += '<div id="containers">';
+    containerWrapper += container.querySelector('#comparing').outerHTML;
+    containerWrapper += container.querySelectorAll('#result table')[0].outerHTML;
+    containerWrapper += container.querySelectorAll('#sidebar-separator').outerHTML;
+    containerWrapper += container.querySelectorAll('#result table')[1].outerHTML;
+    containerWrapper += '</div>';
+
+    container.querySelector('#result').insertAdjacentHTML('beforeend', containerWrapper);
 
     //react to "onclick" events on attributes that have children
     var suffixParents = container.getElementsByClassName('parent-property');

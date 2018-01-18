@@ -12,10 +12,6 @@
 
     var diff = [];
 
-    /*alert(JSON.stringify(aComputed));
-    alert(JSON.stringify(bComputed));*/
-
-
     for (var aname in aComputed) {
       var avalue = aComputed[aname];
       var bvalue = bComputed[aname];
@@ -58,35 +54,17 @@
           tag: elem1[i].tag,
           'class': elem1[i].class,
           differentTab: (elem1.tabId !== chrome.devtools.inspectedWindow.tabId)
-          //differentTab: true
         }, {
           id: elem2[i].id,
           tag: elem2[i].tag,
           'class': elem2[i].class,
           differentTab: (elem2.tabId !== chrome.devtools.inspectedWindow.tabId)
-          //differentTab: true
         }, diff);
 
         body.querySelector('#wrapper').classList.add('showResult');
         body.querySelector('#wrapper').classList.remove('showMessage');
 
       }
-
-
-      /*diffRenderer.render({
-        id: elem1.id,
-        tag: elem1.tag,
-        'class': elem1.class,
-        differentTab: (elem1.tabId !== chrome.devtools.inspectedWindow.tabId)
-      }, {
-        id: elem2.id,
-        tag: elem2.tag,
-        'class': elem2.class,
-        differentTab: (elem2.tabId !== chrome.devtools.inspectedWindow.tabId)
-      }, diff);
-
-      body.querySelector('#wrapper').classList.add('showResult');
-      body.querySelector('#wrapper').classList.remove('showMessage');*/
     }
   }
 
@@ -98,13 +76,6 @@
       if (json) {
         elements = JSON.parse(json);
       }
-
-      /*for (var property in element) {
-        alert(JSON.stringify(element[property]));
-        if (element.hasOwnProperty(property)) {
-          elements.unshift(element[property]);
-        }
-      }*/
 
       elements.unshift(element);
       if (elements.length > 2) {
@@ -168,6 +139,9 @@
     loadLastSelected(updateLastSelected);
 
     button.addEventListener('click', function () {
+      body.querySelectorAll('#result table')[0].innerHTML = '';
+      body.querySelectorAll('#result table')[0].innerHTML = '';
+      body.querySelector('#comparing').innerHTML = '';
       loadLastSelected(pushNewElement);
     });
 
