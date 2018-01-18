@@ -100,6 +100,21 @@ function DiffRenderer(container) {
     return row;
   };
 
+  //Generates reasonable name for elements from its tag name, classes and id
+  this.nameElements = function (elements) {
+    for (var key in elements) {
+      var name = elements[key].tag;
+
+      if (elements[key].id !== null) {
+        name += '#' + elements[key].id;
+      } else if (elements[key].class !== null) {
+        name += '.' + elements[key].class.replace(/ /g, '.');
+      }
+    }
+
+    return name;
+  };
+
   //Generates reasonable name for element from its tag name, classes and id
   this.nameElement = function (element) {
     var name = element.tag;
@@ -124,7 +139,10 @@ function DiffRenderer(container) {
     buffer += (element1.differentTab) ? '(from different tab)' : '';
     buffer += '.</p>';
 
-    container.querySelector('#comparing').innerHTML = buffer;
+    //container.querySelector('#comparing').innerHTML = buffer;
+    /*var pTag = document.createElement('p');
+    pTag.className = ''*/
+    //container.querySelector('#comparing').append(buffer);
 
     buffer = '';
 

@@ -5,11 +5,16 @@
 
   // Returns CSS properties (in alphabetic order) that differ between two given HTML elements.
   function compareStyles(aComputed, bComputed) {
+
     if (!aComputed || !bComputed) {
       return null;
     }
 
     var diff = [];
+
+    /*alert(JSON.stringify(aComputed));
+    alert(JSON.stringify(bComputed));*/
+
 
     for (var aname in aComputed) {
       var avalue = aComputed[aname];
@@ -38,15 +43,13 @@
     body.querySelector('#wrapper').classList.add('showMessage');
     body.querySelector('#wrapper').classList.remove('showResult');
 
-    //alert(JSON.stringify(elements));
-
     if (elements.length === 0) {
       body.querySelector('#message p').innerHTML = "Nothing to compare. Please inspect two elements first.";
     } else if (elements.length === 1) {
       body.querySelector('#message p').innerHTML = "Nothing to compare. Please inspect one more element.";
     } else {
       var elem1 = elements[0], elem2 = elements[1];
-      var counter = (elem1.length > elem2.length) ? elem1.length : elem2.length;
+      var counter = (Object.keys(elem1).length > Object.keys(elem2).length) ? Object.keys(elem1).length : Object.keys(elem2).length;
 
       for (var i = 0; counter > i; i++) {
         var diff = compareStyles(elem1[i].style, elem2[i].style);
@@ -55,11 +58,13 @@
           tag: elem1[i].tag,
           'class': elem1[i].class,
           differentTab: (elem1.tabId !== chrome.devtools.inspectedWindow.tabId)
+          //differentTab: true
         }, {
           id: elem2[i].id,
           tag: elem2[i].tag,
           'class': elem2[i].class,
           differentTab: (elem2.tabId !== chrome.devtools.inspectedWindow.tabId)
+          //differentTab: true
         }, diff);
 
         body.querySelector('#wrapper').classList.add('showResult');
@@ -95,51 +100,45 @@
       }
 
       /*for (var property in element) {
+        alert(JSON.stringify(element[property]));
         if (element.hasOwnProperty(property)) {
           elements.unshift(element[property]);
         }
       }*/
 
-      //alert(JSON.stringify(elements));
       elements.unshift(element);
-      //alert(JSON.stringify(elements.length));
-      //alert(JSON.stringify(elements));
-
-      /*if (elements.length > 2) {
+      if (elements.length > 2) {
         elements.length = 2; //keep only two elements
-      }*/
+      }
 
       localStorage.setItem('elements', JSON.stringify(elements));
 
       renderDiff(elements);
     } catch (e) {
       fallbackElements.unshift(element);
-      /*if (fallbackElements.length > 2) {
+      if (fallbackElements.length > 2) {
         fallbackElements.length = 2;
-      }*/
-      /*for (var property in element) {
-        if (element.hasOwnProperty(property)) {
-          fallbackElements.unshift(element[property]);
-        }
-      }*/
+      }
       renderDiff(fallbackElements);
     }
   }
 
   function updateLastSelected(element) {
-    body.querySelector('#selected strong').innerText = diffRenderer.nameElement(element);
+    body.querySelector('#selected strong').innerText = diffRenderer.nameElements(element);
   }
 
   function loadLastSelected(callback) {
+    //var tabObj = {"sizcache06304045768605915":10,"sizset":527};
     chrome.devtools.inspectedWindow.eval("(" + CSSSnapshooter.toString() + ")($0)", function (result, isException) {
-      //alert(JSON.stringify(result));
       if (!isException && result !== null) {
         //include tabId so that we are able to differentiate between elements from current and other tab
         result.tabId = chrome.devtools.inspectedWindow.tabId;
-
         callback(result);
       }
     });
+    /*var result = CSSSnapshooter(tabObj);
+    result.tabId = 666;
+    callback(result);*/
   }
 
   function recognizeOS() {
@@ -185,6 +184,7 @@
     } catch (e) {
       body.querySelector('#thirdPartyCookiesWarning').classList.add('visible');
     }
+    //loadLastSelected(pushNewElement);
 
     renderDiff(elements);
 

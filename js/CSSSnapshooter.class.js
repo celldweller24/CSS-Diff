@@ -99,54 +99,48 @@ function CSSSnapshooter(node) {
     return output.join(' ');
   }
 
-  function getChildElementsRecursive(nodes) {
+  /*function getChildElementsRecursive(nodes) {
     var childElements = [];
     for (var key in nodes) {
-      if (nodes[key] && JSON.stringify(nodes[key]) !== '{}' && !Number.isInteger(nodes[key])) {
-        for (var node in nodes[key]) {
+      if (nodes[key] === 'object' && JSON.stringify(nodes[key]) !== '{}' && !Number.isInteger(nodes[key])) {
+        for (var node in nodes[key].getElementsByTagName("*")) {
           if (node.indexOf('sizcache') === 0) {
             childElements.push(nodes[key]);
-            getChildElementsRecursive(nodes[key].childNodes);
+            getChildElementsRecursive(nodes[key].getElementsByTagName("*"));
           }
         }
       }
     }
     return childNodes;
-  }
+  }*/
 
   function init() {
     if (!node) {
       return null;
     }
+
     //chrome.extension.getBackgroundPage().console.log('foo');
-
     // https://con-emea-jbaby-menap.jnjemeab19d3-dev.jjc-devops.com/ar   social-media-link
-
     //var styles = node.ownerDocument.defaultView.getComputedStyle(node);
 
-    //var objects = node.childNodes;
-    var objects = {"1":{"sizcache004254600351253868":10,"sizset":54},"12":{},"13":{"sizcache004254600351253868":10,"sizset":468},"15":{"sizcache004254600351253868":10,"sizset":546}};
-    //alert(JSON.stringify(node.childNodes));
+    var parentNode = node;
+    var childNodes = node.getElementsByTagName("*");
+    var objects = Object.assign(parentNode, childNodes);
+    alert(JSON.stringify(parentNode));
+    alert(JSON.stringify(childNodes));
+    alert(JSON.stringify(objects));
+
+
+    //var objects = node.getElementsByTagName("*");
+    //var objects = {"0":{"sizcache06304045768605915":10,"sizset":528},"1":{},"2":{"sizcache06304045768605915":10,"sizset":530},"3":{},"4":{"sizcache06304045768605915":10,"sizset":532},"5":{},"6":{"sizcache06304045768605915":10,"sizset":534},"7":{},"8":{"sizcache06304045768605915":10,"sizset":536},"9":{},"10":{"sizcache06304045768605915":10,"sizset":538},"11":{}};
 
     //var objects = node.querySelectorAll("*");
     //var objects = node.getElementsByTagName("*");
+
     var nodeProperties = [], nodes = {}, styles, childNodes = [];
-    childNodes = getChildElementsRecursive(objects);
-    //alert(JSON.stringify(childNodes));
+    /*childNodes = getChildElementsRecursive(objects);
     childNodes.forEach(function(item, i) {
-      /*styles = window.getComputedStyle(item[i]);
-
-      nodeProperties.push({
-        'tag': objects[key].tagName,
-        'id': (objects[key].attributes.id) ? objects[key].attributes.id.value : undefined,
-        'class': (objects[key].attributes.class) ? objects[key].attributes.class.value : undefined,
-        'style': styleDeclarationToSimpleObject(styles)
-      });*/
-    });
-
-    /*for (var key in objects) {
-      //styles = objects[key].ownerDocument.defaultView.getComputedStyle(objects[key]);
-      styles = window.getComputedStyle(objects[key]);
+      styles = window.getComputedStyle(item[i]);
 
       nodeProperties.push({
         'tag': objects[key].tagName,
@@ -154,11 +148,34 @@ function CSSSnapshooter(node) {
         'class': (objects[key].attributes.class) ? objects[key].attributes.class.value : undefined,
         'style': styleDeclarationToSimpleObject(styles)
       });
+    });*/
+    for (var key in objects) {
+      if (objects[key] && JSON.stringify(objects[key]) !== '{}' && !Number.isInteger(objects[key]) && typeof objects[key] === 'object') {
+        //styles = objects[key].ownerDocument.defaultView.getComputedStyle(objects[key]);
+        styles = objects[key].ownerDocument.defaultView.getComputedStyle(objects[key]);
+        //styles = {"style":{"animation-delay":"0s","animation-direction":"normal","animation-duration":"0s","animation-fill-mode":"none","animation-iteration-count":"1","animation-name":"none","animation-play-state":"running","animation-timing-function":"ease","background-attachment":"scroll","background-blend-mode":"normal","background-clip":"border-box","background-color":"rgb(241, 236, 223)","background-image":"none","background-origin":"padding-box","background-position":"0% 0%","background-repeat":"repeat","background-size":"auto","border-bottom-color":"rgb(102, 102, 102)","border-bottom-left-radius":"0px","border-bottom-right-radius":"0px","border-bottom-style":"none","border-bottom-width":"0px","border-collapse":"separate","border-image-outset":"0px","border-image-repeat":"stretch","border-image-slice":"100%","border-image-source":"none","border-image-width":"1","border-left-color":"r... rgb(102, 102, 102)","border-left":"0px none rgb(102, 102, 102)","border-width":"0px","border-color":"rgb(102, 102, 102)","border-style":"none","border-radius":"0px","border-image":"none","border-spacing":"0px 0px","flex":"0 1 auto","flex-flow":"row nowrap","font":"normal normal 400 normal 16px / 24px desktop","grid-area":"auto / auto / auto / auto","grid-column":"auto / auto","grid-row":"auto / auto","list-style":"disc outside none","margin":"0px","marker":"","outline":"rgb(102, 102, 102) none 0px","overflow":"","padding":"0px","transition":"all 0s ease 0s","-webkit-border-after":"0px none rgb(102, 102, 102)","-webkit-border-before":"0px none rgb(102, 102, 102)","-webkit-border-end":"0px none rgb(102, 102, 102)","-webkit-border-start":"0px none rgb(102, 102, 102)","-webkit-columns":null,"-webkit-column-rule":null,"-webkit-margin-collapse":"","-webkit-mask":"","-webkit-text-emphasis":"","-webkit-transition":"all 0s ease 0s","-webkit-transform-origin":"951.5px 1016.73px"}};
+
+        nodeProperties.push({
+          'tag': objects[key].tagName,
+          'id': (objects[key].attributes.id) ? objects[key].attributes.id.value : undefined,
+          'class': (objects[key].attributes.class) ? objects[key].attributes.class.value : undefined,
+          'style': styleDeclarationToSimpleObject(styles)
+        });
+
+        /*nodeProperties.push({
+          'tag': 'tag-' + i,
+          'id': i,
+          'class': 'class-' + i,
+          'style': styles
+        });*/
+      }
+      //i++;
     }
 
     nodeProperties.forEach(function(item, i) {
       nodes[i] = item;
-    });*/
+    });
+
     /*return {
       'tag': node.tagName,
       'id': (node.attributes.id) ? node.attributes.id.value : undefined,
@@ -166,13 +183,14 @@ function CSSSnapshooter(node) {
       'style': styleDeclarationToSimpleObject(styles)
     };*/
     return nodes;
+
   }
 
   return init();
 }
 
 
-//var tabObj = {"1":{"sizcache004254600351253868":10,"sizset":54},"12":{},"13":{"sizcache004254600351253868":10,"sizset":468},"15":{"sizcache004254600351253868":10,"sizset":546}};
-var tabObj = {"sizcache0661332189112815":10,"sizset":540};
+//var tabObj = {"0":{},"1":{},"2":{},"3":{},"4":{},"5":{},"6":{},"7":{},"8":{},"9":{},"10":{},"11":{"sizcache06304045768605915":10,"sizset":54},"12":{},"13":{"sizcache06304045768605915":10,"sizset":468},"14":{},"15":{"sizcache06304045768605915":10,"sizset":546},"16":{},"17":{},"18":{},"19":{},"20":{},"21":{},"22":{},"23":{},"24":{},"25":{},"26":{},"27":{},"28":{},"29":{},"30":{},"31":{},"32":{},"33":{}};
+//var tabObj = {"sizcache0661332189112815":10,"sizset":540};
 
-CSSSnapshooter(tabObj);
+//CSSSnapshooter(tabObj);
