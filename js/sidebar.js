@@ -42,12 +42,12 @@
     if (elements.length === 0) {
       body.querySelector('#message p').innerHTML = "Nothing to compare. Please inspect two elements first.";
     } else if (elements.length === 1) {
-      body.querySelector('#message p').innerHTML = "Nothing to compare. Please inspect one more element.";
+      body.querySelector('#message p').innerHTML = "One element was selected. Please select second element";
     } else {
       var elem1 = elements[0], elem2 = elements[1];
       var counter = (Object.keys(elem1).length > Object.keys(elem2).length) ? Object.keys(elem1).length : Object.keys(elem2).length;
 
-      for (var i = 0; counter > i; i++) {
+      for (var i = 0; counter - 1 > i; i++) {
         var diff = compareStyles(elem1[i].style, elem2[i].style);
         diffRenderer.render({
           id: elem1[i].id,
@@ -69,7 +69,25 @@
   }
 
   function pushNewElement(element) {
-    try {
+    var elements = [],
+      json = localStorage.getItem('elements');
+
+    if (json) {
+      elements = JSON.parse(json);
+    }
+
+
+    //elements.unshift(element);
+    elements[0] = element;
+    if (elements.length > 2) {
+      elements.length = 2; //keep only two elements
+    }
+    localStorage.setItem('elements', JSON.stringify(elements));
+
+    renderDiff(elements);
+
+
+    /*try {
       var elements = [],
         json = localStorage.getItem('elements');
 
@@ -91,15 +109,15 @@
         fallbackElements.length = 2;
       }
       renderDiff(fallbackElements);
-    }
+    }*/
   }
 
-  function updateLastSelected(element) {
+  /*function updateLastSelected(element) {
     body.querySelector('#selected strong').innerText = diffRenderer.nameElements(element);
-  }
+  }*/
 
   function loadLastSelected(callback) {
-    //var tabObj = {"sizcache06304045768605915":10,"sizset":527};
+    //var tabObj = {"sizcache013994122734975445":10,"sizset":527};
     chrome.devtools.inspectedWindow.eval("(" + CSSSnapshooter.toString() + ")($0)", function (result, isException) {
       if (!isException && result !== null) {
         //include tabId so that we are able to differentiate between elements from current and other tab
@@ -128,15 +146,25 @@
   }
 
   window.onload = function () {
+    //localStorage.setItem('elements', '');
     body = document.getElementsByTagName('body')[0];
     button = body.querySelector('#selected button');
 
+    if (localStorage.getItem('elements').length !== '') {
+      body.querySelector('#message p').innerHTML = "One element was selected. Please select second element.";
+    }
+    //body.querySelector('#message p').innerHTML = "Nothing to compare. Please inspect two elements first.";
+
     diffRenderer = new DiffRenderer(body);
 
-    chrome.devtools.panels.elements.onSelectionChanged.addListener(loadLastSelected.bind(this, updateLastSelected));
+
+    // must deleted
+    //loadLastSelected(pushNewElement);
+
+    //chrome.devtools.panels.elements.onSelectionChanged.addListener(loadLastSelected.bind(this, updateLastSelected));
 
     //load last inspected element right away
-    loadLastSelected(updateLastSelected);
+    //loadLastSelected(updateLastSelected);
 
     button.addEventListener('click', function () {
       body.querySelectorAll('#result table')[0].innerHTML = '';
@@ -148,7 +176,7 @@
     //load elements from storage and render them right away
     var elements = [];
 
-    try {
+    /*try {
       var json = localStorage.getItem('elements');
 
       if (json) {
@@ -158,9 +186,9 @@
     } catch (e) {
       body.querySelector('#thirdPartyCookiesWarning').classList.add('visible');
     }
-    //loadLastSelected(pushNewElement);
 
-    renderDiff(elements);
+
+    renderDiff(elements);*/
 
     window.addEventListener('storage', function (storage) {
       if (storage.key === 'elements') {

@@ -102,17 +102,22 @@ function DiffRenderer(container) {
 
   //Generates reasonable name for elements from its tag name, classes and id
   this.nameElements = function (elements) {
+    var names = [];
     for (var key in elements) {
-      var name = elements[key].tag;
+      if (key !== 'tabId') {
+        var name = elements[key].tag;
 
-      if (elements[key].id !== null) {
-        name += '#' + elements[key].id;
-      } else if (elements[key].class !== null) {
-        name += '.' + elements[key].class.replace(/ /g, '.');
+        if (elements[key].id !== null) {
+          name += '#' + elements[key].id;
+        }
+        if (elements[key].class !== null) {
+          name += '.' + elements[key].class.replace(/ /g, '.');
+        }
+        names.push(name);
       }
     }
 
-    return name;
+    return names;
   };
 
   //Generates reasonable name for element from its tag name, classes and id
@@ -121,7 +126,9 @@ function DiffRenderer(container) {
 
     if (element.id !== null) {
       name += '#' + element.id;
-    } else if (element.class !== null) {
+    }
+
+    if (element.class !== null) {
       name += '.' + element.class.replace(/ /g, '.');
     }
 
@@ -205,22 +212,36 @@ function DiffRenderer(container) {
       }
     }
 
+    //alert(bufferResult === '');
+
     container.querySelector('#comparing').innerHTML = '';
     container.querySelectorAll('#result table')[0].innerHTML = '';
     container.querySelectorAll('#result table')[1].innerHTML = '';
 
-    container.querySelector('#comparing').innerHTML = buffer;
-    container.querySelectorAll('#result table')[0].innerHTML = bufferResult;
-    container.querySelectorAll('#result table')[1].innerHTML = webkitBuffer;
+
+      //container.querySelector('#comparing').innerHTML = buffer;
+      //container.querySelectorAll('#result table')[0].innerHTML = bufferResult;
+      //container.querySelectorAll('#result table')[1].innerHTML = webkitBuffer;
+
+
+    /*containerWrapper += '<div id="containers">';
+    containerWrapper += container.querySelector('#comparing').innerHTML = buffer;
+    containerWrapper += container.querySelectorAll('#result table')[0].outerHTML;
+    containerWrapper += '<div id="sidebar-separator">Prefixed properties</div>';
+    containerWrapper += container.querySelectorAll('#result table')[1].outerHTML;
+    containerWrapper += '</div>';*/
 
     containerWrapper += '<div id="containers">';
-    containerWrapper += container.querySelector('#comparing').outerHTML;
-    containerWrapper += container.querySelectorAll('#result table')[0].outerHTML;
-    containerWrapper += container.querySelectorAll('#sidebar-separator').outerHTML;
-    containerWrapper += container.querySelectorAll('#result table')[1].outerHTML;
+    containerWrapper += '<div id="comparing">' + buffer + '</div>';
+    containerWrapper += '<table class="monospace first">' + bufferResult + '</table>';
+    containerWrapper += '<div id="sidebar-separator">Prefixed properties</div>';
+    containerWrapper += '<table class="monospace second">' + webkitBuffer + '</table>';
     containerWrapper += '</div>';
 
-    container.querySelector('#result').insertAdjacentHTML('beforeend', containerWrapper);
+    if (bufferResult !== '') {
+      container.querySelector('#result').insertAdjacentHTML('beforeend', containerWrapper);
+   }
+
 
     //react to "onclick" events on attributes that have children
     var suffixParents = container.getElementsByClassName('parent-property');
