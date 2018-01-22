@@ -212,36 +212,29 @@ function DiffRenderer(container) {
       }
     }
 
-    //alert(bufferResult === '');
-
     container.querySelector('#comparing').innerHTML = '';
     container.querySelectorAll('#result table')[0].innerHTML = '';
     container.querySelectorAll('#result table')[1].innerHTML = '';
 
 
-      //container.querySelector('#comparing').innerHTML = buffer;
-      //container.querySelectorAll('#result table')[0].innerHTML = bufferResult;
-      //container.querySelectorAll('#result table')[1].innerHTML = webkitBuffer;
-
-
-    /*containerWrapper += '<div id="containers">';
-    containerWrapper += container.querySelector('#comparing').innerHTML = buffer;
-    containerWrapper += container.querySelectorAll('#result table')[0].outerHTML;
-    containerWrapper += '<div id="sidebar-separator">Prefixed properties</div>';
-    containerWrapper += container.querySelectorAll('#result table')[1].outerHTML;
-    containerWrapper += '</div>';*/
-
     containerWrapper += '<div id="containers">';
+    //containerWrapper += '<img src="../img/treeRightTriangleBlack.png" class="arrow">';
     containerWrapper += '<div id="comparing">' + buffer + '</div>';
+    //containerWrapper += '<div class="table-wrapper">';
     containerWrapper += '<table class="monospace first">' + bufferResult + '</table>';
     containerWrapper += '<div id="sidebar-separator">Prefixed properties</div>';
     containerWrapper += '<table class="monospace second">' + webkitBuffer + '</table>';
+    //containerWrapper += '</div>';
     containerWrapper += '</div>';
 
     if (bufferResult !== '') {
       container.querySelector('#result').insertAdjacentHTML('beforeend', containerWrapper);
-   }
+    } else {
+      container.querySelector('#result').innerHTML = 'Selected items are identical'
+    }
 
+    // react to "onclick" events on arrow next to comparing selectors.
+    //var arrowsToggle = document.getElementsByClassName('arrow');
 
     //react to "onclick" events on attributes that have children
     var suffixParents = container.getElementsByClassName('parent-property');

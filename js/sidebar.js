@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var body, button, diffRenderer, fallbackElements = [];
+  var body, button, diffRenderer;
 
   // Returns CSS properties (in alphabetic order) that differ between two given HTML elements.
   function compareStyles(aComputed, bComputed) {
@@ -77,44 +77,14 @@
     }
 
 
-    //elements.unshift(element);
-    elements[0] = element;
+    elements.unshift(element);
     if (elements.length > 2) {
       elements.length = 2; //keep only two elements
     }
     localStorage.setItem('elements', JSON.stringify(elements));
 
     renderDiff(elements);
-
-
-    /*try {
-      var elements = [],
-        json = localStorage.getItem('elements');
-
-      if (json) {
-        elements = JSON.parse(json);
-      }
-
-      elements.unshift(element);
-      if (elements.length > 2) {
-        elements.length = 2; //keep only two elements
-      }
-
-      localStorage.setItem('elements', JSON.stringify(elements));
-
-      renderDiff(elements);
-    } catch (e) {
-      fallbackElements.unshift(element);
-      if (fallbackElements.length > 2) {
-        fallbackElements.length = 2;
-      }
-      renderDiff(fallbackElements);
-    }*/
   }
-
-  /*function updateLastSelected(element) {
-    body.querySelector('#selected strong').innerText = diffRenderer.nameElements(element);
-  }*/
 
   function loadLastSelected(callback) {
     //var tabObj = {"sizcache013994122734975445":10,"sizset":527};
@@ -146,30 +116,28 @@
   }
 
   window.onload = function () {
-    //localStorage.setItem('elements', '');
     body = document.getElementsByTagName('body')[0];
     button = body.querySelector('#selected button');
 
     if (localStorage.getItem('elements').length !== '') {
       body.querySelector('#message p').innerHTML = "One element was selected. Please select second element.";
     }
-    //body.querySelector('#message p').innerHTML = "Nothing to compare. Please inspect two elements first.";
 
     diffRenderer = new DiffRenderer(body);
-
-
-    // must deleted
-    //loadLastSelected(pushNewElement);
 
     //chrome.devtools.panels.elements.onSelectionChanged.addListener(loadLastSelected.bind(this, updateLastSelected));
 
     //load last inspected element right away
     //loadLastSelected(updateLastSelected);
 
+    var containerWrapper = '';
     button.addEventListener('click', function () {
-      body.querySelectorAll('#result table')[0].innerHTML = '';
-      body.querySelectorAll('#result table')[0].innerHTML = '';
-      body.querySelector('#comparing').innerHTML = '';
+      containerWrapper += '<div id="containers">';
+      containerWrapper += '<div id="comparing"></div>';
+      containerWrapper += '<table class="monospace first"></table>';
+      containerWrapper += '<table class="monospace second"></table>';
+      containerWrapper += '</div>';
+      body.querySelector('#result').innerHTML = containerWrapper;
       loadLastSelected(pushNewElement);
     });
 
